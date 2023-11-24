@@ -437,7 +437,13 @@ class Actions(  # pylint: disable=too-many-instance-attributes,too-many-public-m
             files = [self.fm.thisfile]
 
         self.signal_emit('execute.before', keywords=kw)
-        filenames = [f.path for f in files]
+        try:
+            filenames = [f.path for f in files]
+        except AttributeError as a:
+            if all(isinstance(f, str) for f in files):
+                filenames = files
+            else:
+                raise a
         label = kw.get('label', kw.get('app', None))
 
         def execute():
